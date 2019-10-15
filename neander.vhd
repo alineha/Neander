@@ -2,9 +2,9 @@
 -- Company:
 -- Engineer:
 --
--- Create Date:    09:46:39 10/08/2019
+-- Create Date: 09:46:39 10/08/2019
 -- Design Name:
--- Module Name:    neander - Behavioral
+-- Module Name: neander - Behavioral
 -- Project Name:
 -- Target Devices:
 -- Tool versions:
@@ -34,7 +34,8 @@ entity neander is
 		clk : in STD_LOGIC;
 		rst : in STD_LOGIC;
 		currentDATA : out STD_LOGIC_VECTOR (7 downto 0);
-		ac : out STD_LOGIC_VECTOR (7 downto 0));
+		ac : out STD_LOGIC_VECTOR (7 downto 0)
+	);
 end neander;
 
 architecture Behavioral of neander is
@@ -86,23 +87,14 @@ architecture Behavioral of neander is
 		);
 	end component;
 
-	component reg2
+	component reg
+		generic ( size : integer );
 		port (
 			clk : in std_logic;
 			rst : in std_logic;
 			d : in std_logic_vector(1 downto 0);
 			load : in std_logic;
 			s : out std_logic_vector(1 downto 0)
-		);
-	end component;
-
-	component reg8
-		port (
-			clk : in std_logic;
-			rst : in std_logic;
-			d : in std_logic_vector(7 downto 0);
-			load : in std_logic;
-			s : out std_logic_vector(7 downto 0)
 		);
 	end component;
 
@@ -117,15 +109,15 @@ architecture Behavioral of neander is
 		);
 	end component;
 
-	COMPONENT memory
-  PORT (
-    clka : IN STD_LOGIC;
-    wea : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    addra : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-    dina : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-    douta : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
-  );
-END COMPONENT;
+	component memory
+		port (
+			clka : in STD_LOGIC;
+			wea : in STD_LOGIC_VECTOR(0 downto 0);
+			addra : in STD_LOGIC_VECTOR(7 downto 0);
+			dina : in STD_LOGIC_VECTOR(7 downto 0);
+			douta : out STD_LOGIC_VECTOR(7 downto 0)
+		);
+	end component;
 
 	signal outMEM, outMUX, outREM, outRDM, outAC, outRI, outPC, outULA : std_logic_vector (7 downto 0);
 	signal nAux, zAux, n, z : std_logic;
@@ -135,107 +127,131 @@ END COMPONENT;
 	signal wea : std_logic_vector (0 downto 0);
 
 begin
-
-	PC : counter port map(
-		clk => clk,
-		rst => rst,
-		enable => incPC,
-		load => cgPC,
-		d => outREM,
+	PC : counter
+	port map(
+		clk => clk, 
+		rst => rst, 
+		enable => incPC, 
+		load => cgPC, 
+		d => outREM, 
 		s => outPC
 	);
 
-	CTRL : ctrl_unit port map(
-		clk => clk,
-		rst => rst,
-		inst => operation,
-		n => n,
-		z => z,
-		selREM => selREM,
-		cgREM => cgREM,
-		cgRDM => cgRDM,
-		cgAC => cgAC,
-		cgRI => cgRI,
-		cgNZ => cgNZ,
-		cgPC => cgPC,
-		incPC => incPC,
-		selULA => selULA,
+	CTRL : ctrl_unit
+	port map(
+		clk => clk, 
+		rst => rst, 
+		inst => operation, 
+		n => n, 
+		z => z, 
+		selREM => selREM, 
+		cgREM => cgREM, 
+		cgRDM => cgRDM, 
+		cgAC => cgAC, 
+		cgRI => cgRI, 
+		cgNZ => cgNZ, 
+		cgPC => cgPC, 
+		incPC => incPC, 
+		selULA => selULA, 
 		wea => wea
 	);
 
-	DECOD : decod_inst port map(
-		opcode => outRI(7 downto 4),
+	DECOD : decod_inst
+	port map(
+		opcode => outRI(7 downto 4), 
 		operation => operation
 	);
 
-	MUXREM : mux2x1 port map(
-		e0 => outPC,
-		e1 => outRDM,
-		s => outMUX,
+	MUXREM : mux2x1
+	port map(
+		e0 => outPC, 
+		e1 => outRDM, 
+		s => outMUX, 
 		sel => selREM
 	);
 
-	NZ : reg2 port map(
-		clk => clk,
-		rst => rst,
-		d(0) => nAux,
-		d(1) => zAux,
-		load => cgNZ,
-		s(0) => n,
+	NZ : reg
+	generic map (
+		size => 2
+	)
+	port map(
+		clk => clk, 
+		rst => rst, 
+		d(0) => nAux, 
+		d(1) => zAux, 
+		load => cgNZ, 
+		s(0) => n, 
 		s(1) => z
 	);
 
-	RI : reg8 port map(
-		clk => clk,
-		rst => rst,
-		d => outRDM,
-		load => cgRI,
+	RI : reg
+	generic map (
+		size => 8
+	)
+	port map(
+		clk => clk, 
+		rst => rst, 
+		d => outRDM, 
+		load => cgRI, 
 		s => outRI
 	);
 
-	AC_inst : reg8 port map(
-		clk => clk,
-		rst => rst,
-		d => outULA,
-		load => cgAC,
+	AC_inst : reg
+	generic map (
+		size => 8
+	)
+	port map(
+		clk => clk, 
+		rst => rst, 
+		d => outULA, 
+		load => cgAC, 
 		s => outAC
 	);
 
-	REM_inst : reg8 port map(
-		clk => clk,
-		rst => rst,
-		d => outMUX,
-		load => cgREM,
+	REM_inst : reg
+	generic map (
+		size => 8
+	)
+	port map(
+		clk => clk, 
+		rst => rst, 
+		d => outMUX, 
+		load => cgREM, 
 		s => outREM
 	);
 
-	RDM : reg8 port map(
-		clk => clk,
-		rst => rst,
-		d => outMEM,
-		load => cgRDM,
+	RDM : reg
+	generic map (
+		size => 8
+	)
+	port map(
+		clk => clk, 
+		rst => rst, 
+		d => outMEM, 
+		load => cgRDM, 
 		s => outRDM
 	);
 
-	ULA_inst : ula port map(
-		x => outAC,
-		y => outRDM,
-		opsel => selULA,
-		s => outULA,
-		n => nAux,
+	ULA_inst : ula
+	port map(
+		x => outAC, 
+		y => outRDM, 
+		opsel => selULA, 
+		s => outULA, 
+		n => nAux, 
 		z => zAux
 	);
 
-memory_inst : memory
-  PORT MAP (
-    clka => clk,
-    wea => wea,
-    addra => outREM,
-    dina => outRDM,
-    douta => outMEM
-  );
-  
-  currentDATA <= outMEM;
-  ac <= outAC;
+	memory_inst : memory
+	port map(
+		clka => clk, 
+		wea => wea, 
+		addra => outREM, 
+		dina => outRDM, 
+		douta => outMEM
+	);
+ 
+	currentDATA <= outMEM;
+	ac <= outAC;
 
 end Behavioral;
