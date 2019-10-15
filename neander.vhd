@@ -92,9 +92,9 @@ architecture Behavioral of neander is
 		port (
 			clk : in std_logic;
 			rst : in std_logic;
-			d : in std_logic_vector(1 downto 0);
+			d : in std_logic_vector((size-1) downto 0);
 			load : in std_logic;
-			s : out std_logic_vector(1 downto 0)
+			s : out std_logic_vector((size-1) downto 0)
 		);
 	end component;
 

@@ -34,9 +34,9 @@ entity reg is
 	port (
 		clk : in STD_LOGIC;
 		rst : in STD_LOGIC;
-		d : in STD_LOGIC_VECTOR (size-1 downto 0);
+		d : in STD_LOGIC_VECTOR ((size-1) downto 0);
 		load : in STD_LOGIC;
-		s : out STD_LOGIC_VECTOR (size-1 downto 0));
+		s : out STD_LOGIC_VECTOR ((size-1) downto 0));
 end reg;
 
 architecture Behavioral of reg is
