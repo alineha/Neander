@@ -38,6 +38,7 @@ entity ctrl_unit is
 		z : in STD_LOGIC;
 		selREM : out STD_LOGIC;
 		cgREM : out STD_LOGIC;
+		selRDM : out STD_LOGIC;
 		cgRDM : out STD_LOGIC;
 		cgAC : out STD_LOGIC;
 		cgRI : out STD_LOGIC;
@@ -68,7 +69,8 @@ begin
 	process (currentState, inst, n, z)
 	begin
 		selREM <= '0';
-		cgREM <= '1';
+		cgREM <= '0';
+		selRDM <= '0';
 		cgRDM <= '0';
 		cgAC <= '0';
 		cgRI <= '0';
@@ -132,7 +134,7 @@ begin
 				if (inst(5 downto 1) /= "00000" or inst(10) = '1' or inst(11) = '1') then
 					wea <= "0";
 					cgRDM <= '1';
-					incPC <= '1';
+					--incPC <= '1';
 					nextState <= t6;
 				elsif (inst(7) = '1') then
 					wea <= "0";
@@ -189,7 +191,7 @@ begin
 			when t7 =>
 				if (inst(5 downto 1) /= "00000" or inst(10) = '1' or inst(11) = '1') then
 					selREM <= '1';
-					cgRDM <= '1';
+					cgREM <= '1';
 					nextState <= t8;
 				elsif (inst(7) = '1' or (inst(8) = '1' and n = '1') or (inst(9) = '1' and z = '1')) then
 					cgPC <= '1';
@@ -202,7 +204,8 @@ begin
 					wea <= "0";
 					cgRDM <= '1';
 					nextState <= t9;
-				elsif (inst(5) = '1') then
+				elsif (inst(1) = '1') then
+					selRDM <= '1';
 					cgRDM <= '1';
 					nextState <= t10;
 				else
@@ -213,7 +216,8 @@ begin
 					wea <= "0";
 					cgRDM <= '1';
 					nextState <= t10;
-				elsif (inst(5) = '1') then
+				elsif (inst(1) = '1') then
+					selRDM <= '1';
 					cgRDM <= '1';
 					nextState <= t10;
 				else

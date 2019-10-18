@@ -60,6 +60,7 @@ architecture Behavioral of neander is
 			z : in std_logic;
 			selREM : out std_logic;
 			cgREM : out std_logic;
+			selRDM : out std_logic;
 			cgRDM : out std_logic;
 			cgAC : out std_logic;
 			cgRI : out std_logic;
@@ -119,10 +120,10 @@ architecture Behavioral of neander is
 		);
 	end component;
 
-	signal outMEM, outMUX, outREM, outRDM, outAC, outRI, outPC, outULA : std_logic_vector (7 downto 0);
+	signal outMEM, outMUXREM, outREM, outMUXRDM, outRDM, outAC, outRI, outPC, outULA : std_logic_vector (7 downto 0);
 	signal nAux, zAux, n, z : std_logic;
 	signal operation : std_logic_vector (12 downto 0);
-	signal selREM, cgREM, cgRDM, cgAC, cgRI, cgNZ, cgPC, incPC : std_logic;
+	signal selREM, cgREM, selRDM, cgRDM, cgAC, cgRI, cgNZ, cgPC, incPC : std_logic;
 	signal selULA : std_logic_vector (2 downto 0);
 	signal wea : std_logic_vector (0 downto 0);
 
@@ -146,6 +147,7 @@ begin
 		z => z, 
 		selREM => selREM, 
 		cgREM => cgREM, 
+		selRDM => selRDM,
 		cgRDM => cgRDM, 
 		cgAC => cgAC, 
 		cgRI => cgRI, 
@@ -166,8 +168,16 @@ begin
 	port map(
 		e0 => outPC, 
 		e1 => outRDM, 
-		s => outMUX, 
+		s => outMUXREM, 
 		sel => selREM
+	);
+	
+	MUXRDM : mux2x1
+	port map(
+		e0 => outMEM, 
+		e1 => outAC, 
+		s => outMUXRDM, 
+		sel => selRDM
 	);
 
 	NZ : reg
@@ -215,7 +225,7 @@ begin
 	port map(
 		clk => clk, 
 		rst => rst, 
-		d => outMUX, 
+		d => outMUXREM, 
 		load => cgREM, 
 		s => outREM
 	);
@@ -227,7 +237,7 @@ begin
 	port map(
 		clk => clk, 
 		rst => rst, 
-		d => outMEM, 
+		d => outMUXRDM, 
 		load => cgRDM, 
 		s => outRDM
 	);
