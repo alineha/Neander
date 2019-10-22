@@ -30,7 +30,7 @@ USE ieee.std_logic_1164.ALL;
  
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
+USE ieee.numeric_std.ALL;
  
 ENTITY neander_tb IS
 END neander_tb;
@@ -56,9 +56,10 @@ ARCHITECTURE behavior OF neander_tb IS
  	--Outputs
    signal currentDATA : std_logic_vector(7 downto 0);
    signal ac : std_logic_vector(7 downto 0);
+	signal counter : integer := 0;
 
    -- Clock period definitions
-   constant clk_period : time := 10 ns;
+   constant clk_period : time := 20 ns;
  
 BEGIN
  
@@ -76,6 +77,7 @@ BEGIN
 		clk <= '0';
 		wait for clk_period/2;
 		clk <= '1';
+		counter <= counter + 1;
 		wait for clk_period/2;
    end process;
  
@@ -87,10 +89,6 @@ BEGIN
 		rst <= '1';
       wait for 100 ns;	
 		rst <= '0';
-      wait for clk_period*10;
-
-      -- insert stimulus here 
-
       wait;
    end process;
 

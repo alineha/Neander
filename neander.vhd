@@ -126,6 +126,8 @@ architecture Behavioral of neander is
 	signal selREM, cgREM, selRDM, cgRDM, cgAC, cgRI, cgNZ, cgPC, incPC : std_logic;
 	signal selULA : std_logic_vector (2 downto 0);
 	signal wea : std_logic_vector (0 downto 0);
+	type inst is (nop, sta, lda, add, or_inst, and_inst, not_inst, jmp, jn, jz, sub, mult, hlt); -- dummy variable used for simulation purposes
+	signal currentInstruction : inst;
 
 begin
 	PC : counter
@@ -263,5 +265,19 @@ begin
  
 	currentDATA <= outMEM;
 	ac <= outAC;
+	
+	currentInstruction <= nop when operation(0)='1' else
+								 sta when operation(1)='1' else
+								 lda when operation(2)='1' else
+								 add when operation(3)='1' else
+								 or_inst when operation(4)='1' else
+								 and_inst when operation(5)='1' else
+								 not_inst when operation(6)='1' else
+								 jmp when operation(7)='1' else
+								 jn when operation(8)='1' else
+								 jz when operation(9)='1' else
+								 sub when operation(10)='1' else
+								 mult when operation(11)='1' else
+								 hlt when operation(12)='1' else nop;
 
 end Behavioral;
