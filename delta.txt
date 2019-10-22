@@ -1,0 +1,21 @@
+ENTRADAS
+128 - a
+129 - b
+130 - c
+
+SAÍDAS
+131 - delta (b^2 -4*a*c)
+
+VARIÁVEIS AUXILIARES
+133 - constante 4
+134 - 4*a*c
+
+LDA 128
+MUL 133
+MUL 130
+STA 134
+LDA 129
+MUL 129
+SUB 134
+STA 131
+HLT
